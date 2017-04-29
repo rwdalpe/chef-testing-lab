@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
     gem install --user-install bundler
 
-    if ! (cat ~/.bashrc | grep "~/.gem/ruby/2.3.0/bin"); then
+    if ! (cat ~/.bashrc | grep ".gem/ruby/2.3.0/bin"); then
         echo 'export PATH="$HOME/.gem/ruby/2.3.0/bin:$PATH"' >> ~/.bashrc
     fi
   SHELL
