@@ -1,0 +1,3 @@
+Copyright (c) 2017 Apex Learning, Inc.
+
+Hosted here with permission.
