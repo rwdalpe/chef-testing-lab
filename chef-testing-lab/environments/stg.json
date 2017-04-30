@@ -1,0 +1,13 @@
+{
+    "name": "stg",
+    "description": "Staging",
+    "json_class": "Chef::Environment",
+    "chef_type": "environment",
+    "default_attributes": {
+        "wrapper": {
+            "time": {
+                "tz": "Etc/UTC"
+            }
+        }
+    }
+}

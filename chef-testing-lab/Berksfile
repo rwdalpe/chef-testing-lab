@@ -1,0 +1,3 @@
+source "https://supermarket.chef.io"
+
+cookbook "time_wrapper", "= 1.0.0", path: "./cookbooks/time_wrapper"

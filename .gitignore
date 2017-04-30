@@ -1,4 +1,5 @@
 .vagrant
 .kitchen
+chef-testing-lab*/build
 *.log
 *.lock
