@@ -8,12 +8,13 @@ UTC=true)
     its('content') { should match(expected_content) }
 end
 
-describe file('/etc/localtime') do
-    it { should exist }
-    it { should be_file }
-    it { should be_symlink }
-    it { should be_linked_to("/usr/share/zoneinfo/#{expected_timezone}")}
-end
+# TODO:
+# Add a test which verifies the following:
+#  * /etc/localtime
+#    * exists
+#    * is a file
+#    * is a symlink
+#    * is symlinked to the expected timezone file in /usr/share/zoneinfo
 
 describe service('ntpd') do
     it { should be_installed }
