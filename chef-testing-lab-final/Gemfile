@@ -1,0 +1,9 @@
+source 'https://rubygems.org'
+gem 'berkshelf'
+gem 'rake'
+gem 'chef', "= 12.14.77"
+gem 'chef-sugar'
+gem 'chefspec'
+gem 'test-kitchen'
+gem 'kitchen-docker'
+gem 'kitchen-inspec'

@@ -34,5 +34,7 @@ Vagrant.configure("2") do |config|
     if ! (cat ~/.bashrc | grep ".gem/ruby/2.3.0/bin"); then
         echo 'export PATH="$HOME/.gem/ruby/2.3.0/bin:$PATH"' >> ~/.bashrc
     fi
+
+    git clone https://github.com/rwdalpe/chef-testing-lab.git
   SHELL
 end

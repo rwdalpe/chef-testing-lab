@@ -1,0 +1,28 @@
+---
+driver:
+  name: docker
+
+provisioner:
+  name: chef_solo
+  environments_path: "./environments/"
+  solo_rb:
+    environment: <%= ENV['CHEF_ENV'] || 'dev' %>
+
+platforms:
+  - name: centos6
+    driver_config: 
+      image: centos:6
+      platform: centos
+      remove_images: true
+      require_chef_omnibus: 12.14.77
+
+suites:
+  - name: default
+    run_list: [
+      "role[server]"
+    ]
+
+verifier:
+  name: inspec
+  attrs:
+    - "test/integration/<%= ENV['CHEF_ENV'] || 'dev' %>-attributes.yml"
