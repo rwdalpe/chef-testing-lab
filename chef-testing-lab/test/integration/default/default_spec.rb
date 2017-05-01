@@ -16,6 +16,15 @@ end
 #    * is a symlink
 #    * is symlinked to the expected timezone file in /usr/share/zoneinfo
 
+describe('test /etc/localtime') do
+    pending(%Q(Write a test which verifies
+/etc/localtime 
+* exists, 
+* is a file, 
+* is a symlink, 
+* and is symlinked to the expected timezone file in /usr/share/zoneinfo))
+end
+
 describe service('ntpd') do
     it { should be_installed }
     it { should be_enabled }

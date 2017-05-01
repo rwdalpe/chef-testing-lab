@@ -10,6 +10,13 @@ describe('time_wrapper::timezone') do
     #  * The node['tz'] and node['timezone']['use_symlink'] are correctly overridden
     #  * The timezone-ii::default recipe is included
 
+    it('should test timezon-ii inclusion') do
+        pending(%Q(Add a test which verifies the following:
+* The default attributes needed by time_wrapper::timezone have correct values
+* The node['tz'] and node['timezone']['use_symlink'] are correctly overridden
+* The timezone-ii::default recipe is included))
+    end
+
     it('should set /etc/sysconfig/clock with correct content') do
         expected_content=%Q(ZONE="#{node['wrapper']['time']['tz']}"
 UTC=true)
