@@ -40,12 +40,17 @@ provisioning the following will happen:
     * the [bundler][7] gem
 3. This repository will be cloned into /home/ubuntu
 
-### Looking Around The Lab
+### Glance Around The Lab
 
 Let's start by looking at the structure of the lab code.
 
 `cookbooks`: This directory contains the `time_wrapper` cookbook, which is our
 sample cookbook that we wish to unit test. 
+
+All the files inside the `time_wrapper` cookbook should be familiar to those who
+have worked with a Chef cookbook before, with the exception of the `test`
+directory. In that directory we will place our [ChefSpec][4] test code for the 
+lab.
 
 `environments`: This directory contains some sample environment configuraiton.
 For this lab, we have two environments: dev, and stg. You'll notice that the
@@ -53,6 +58,13 @@ environments do have different configuration values!
 
 `roles`: This directory contains our `server` role, which will apply our
 `time_wrapper` recipes. We'll be writing integration tests against this role.
+
+`test`: In the top-level `test` directory we will put our [Inspec][5] 
+integration tests. It is organized in the standard Test-Kitchen format:
+`test/integration/SUITE_NAME`
+
+You'll also see several `-attribute.yml` files in this directory. Those are
+Inspec attribute files, and their usage will be explained later in the lab.
 
 `.kitchen.yml`: This is a configuration file for [Test-Kitchen][3]. 
 Documentation for kitchen YAML is a bit split up, but key points can be found
@@ -78,6 +90,59 @@ instances where multiple versions of a gem may be installed.
 convenient wrappers around certain command sequences. The lab will always
 describe such sequences in depth before introducing the rake wrappers.
 
+### Getting Dependencies
+
+Before we do anything else, we need to get our ruby dependencies!
+
+From the `chef-testing-lab` directory, use bundler to install the dependencies.
+
+````
+bundle install
+````
+
+This will download and install all the gems specified in the `Gemfile`, 
+respecting any version constraints given. We can also use bundler to pin our
+ruby processes to those same gems. To do this, we'll be running any ruby 
+commands with `bundle exec`.
+
+### Unit Testing
+
+Now that we have what we need, let's dive a bit deeper. The
+purpose of this lab is to write integration tests for our imaginary `server`
+Chef role, and unit tests against our `time_wrapper` cookbook. Let's start small
+with the cookbook unit tests.
+
+Looking at `time_wrapper` we can see that we have two recipes: `ntp` and 
+`timezone`. The `ntp` recipe is just a wrapper around the `ntp` community 
+cookbook, and `timezone` is mostly just a wrapper around `timezone-ii`.
+`timezone` also modifies the `/etc/sysconfig/clock` file, which `timezone-ii`
+does not.
+
+We can also see that some tests are already written! There is a file called
+`timezone_spec.rb` which has some content. Let's try running the tests first.
+ChefSpec is an extension of [rspec][9], and it can be configured like rspec.
+
+To run the tests:
+
+````
+# --default-path is used here because rspec defaults to looking for a 
+# diretory called 'spec' to contain test files. We're using a structure
+# more similar to test-kitchen (test/unit/), so we'll override the default.
+#
+# --require spec_helper tells rspec to require the file 'spec_helper.rb' in
+# every test run. We'll see why in just a moment
+bundle exec rspec --default-path cookbooks/time_wrapper/test/unit --require spec_helper
+````
+
+When you ran that command, you likely saw output containing the following:
+
+````
+Chef::Exceptions::CookbookNotFound:
+Cookbook time_wrapper not found. If you're loading time_wrapper from another cookbook, make sure you configure the dependency in your metadata
+````
+
+That doesn't seem right, so let's figure out what's going on.
+
 [1]: https://www.vagrantup.com/
 [2]: https://www.virtualbox.org/wiki/Downloads
 [3]: https://github.com/test-kitchen/test-kitchen
@@ -86,3 +151,4 @@ describe such sequences in depth before introducing the rake wrappers.
 [6]: http://berkshelf.com/v2.0/
 [7]: https://bundler.io/
 [8]: https://ruby.github.io/rake/
+[9]: http://rspec.info/
