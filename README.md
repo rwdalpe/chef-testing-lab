@@ -299,6 +299,44 @@ CHEF_ENV=stg bundle exec kitchen test
 
 Looks like there's something else wrong here.
 
+````
+  File /etc/sysconfig/clock
+     ✔  should exist
+     ✔  should be file
+     ∅  content should match "ZONE=\"Etc/UTC\"\nUTC=true"
+     expected "ZONE=\"US/Eastern\"\nUTC=true" to match "ZONE=\"Etc/UTC\"\nUTC=true"
+     Diff:
+     @@ -1,3 +1,3 @@
+     -ZONE="Etc/UTC"
+     +ZONE="US/Eastern"
+      UTC=true
+````
+
+So what happened? Let's take a look at our test. The expectation we define
+uses a test attribute defined in `ENVIRONMENT-attributes.yml`. What's in
+`dev-attributes` vs `stg-attributes`? Looks like our tests have said we expect
+dev to be in `US/Pacific` and stg in `Etc/UTC`. Our unit tests have told us that
+our cookbook should work correctly if given the right attribute values, so maybe
+there's something wrong in the environment files.
+
+And, sure enough, if we look in `stg.json`, we can see that we've made a mistake
+and set the timezone to `US/Eastern`. Change that value to `Etc/UTC` and re-run
+the tests. They should all pass now.
+
+And now we have a working cookbook and role with correct configuration!
+
+## Conclusion
+
+Now you've seen:
+
+* How to unit test using chefspec
+* How to integration test with Inspec and Test-Kitchen
+* Some supporting tools that make it all happen
+
+These tools have a lot of power and flexibility, and they don't have to be used
+in exactly the way shown here. Hopefully you feel more confident now to take
+what you've learned and adapt it to some real code!
+
 [1]: https://www.vagrantup.com/
 [2]: https://www.virtualbox.org/wiki/Downloads
 [3]: https://github.com/test-kitchen/test-kitchen
