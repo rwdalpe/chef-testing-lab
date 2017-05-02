@@ -101,8 +101,8 @@ First, sign into the VM
 vagrant ssh
 ````
 
-Change to the `chef-testing-lab` in your home directory directory, use bundler 
-to install the dependencies.
+Change to the `chef-testing-lab/chef-testing-lab` folder in your home directory,
+and use bundler to install the dependencies.
 
 ````
 bundle install
