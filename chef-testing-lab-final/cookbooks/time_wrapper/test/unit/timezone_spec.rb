@@ -1,4 +1,5 @@
 require 'chefspec'
+require 'chefspec/berkshelf'
 
 describe('time_wrapper::timezone') do
     let(:chef_run) { ChefSpec::SoloRunner.new($DEFAULT_CENTOS_SOLORUNNER_CFG).converge(described_recipe) }

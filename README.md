@@ -125,23 +125,61 @@ ChefSpec is an extension of [rspec][9], and it can be configured like rspec.
 To run the tests:
 
 ````
+# --color just makes the output a bit prettier
+#
 # --default-path is used here because rspec defaults to looking for a 
 # diretory called 'spec' to contain test files. We're using a structure
-# more similar to test-kitchen (test/unit/), so we'll override the default.
+# more similar to test-kitchen (COOKBOOK_NAME/test/unit/), so we'll override the
+# default.
 #
-# --require spec_helper tells rspec to require the file 'spec_helper.rb' in
-# every test run. We'll see why in just a moment
-bundle exec rspec --default-path cookbooks/time_wrapper/test/unit --require spec_helper
+# --require ./spec_helper tells rspec to require the file 'spec_helper.rb' from 
+# during every test run. We can use this spec_helper to define widely used
+# common test code
+bundle exec rspec --color --default-path cookbooks/*/test/unit/ --require ./spec_helper
 ````
 
 When you ran that command, you likely saw output containing the following:
 
 ````
-Chef::Exceptions::CookbookNotFound:
-Cookbook time_wrapper not found. If you're loading time_wrapper from another cookbook, make sure you configure the dependency in your metadata
+Failures:
+
+  1) time_wrapper::timezone should test timezon-ii inclusion FIXED
+     Expected pending 'Add a test which verifies the following:
+* The default attributes needed by time_wrapper::timezone have correct values
+* The node['tz'] and node['timezone']['use_symlink'] are correctly overridden
+* The timezone-ii::default recipe is included' to fail. No Error was raised.
+     # ./cookbooks/time_wrapper/test/unit/timezone_spec.rb:14
+
+Finished in 0.25465 seconds (files took 2.39 seconds to load)
+2 examples, 1 failure
+
+Failed examples:
+
+rspec ./cookbooks/time_wrapper/test/unit/timezone_spec.rb:14 # time_wrapper::timezone should test timezon-ii inclusion
 ````
 
-That doesn't seem right, so let's figure out what's going on.
+So we see that there were two tests, one of which failed. Let's dig into the
+test file. It's fully commented, so we should be able to understand the file by
+reading through it.
+
+And we can also see that we have our first task: adding a missing test. Using
+the documentation at <https://www.relishapp.com/rspec/rspec-expectations/docs/built-in-matchers>, 
+and <https://github.com/sethvargo/chefspec#making-assertions> you should be able
+to construct a test which verifies all the requirements listed in the comments. 
+Remember that you can look at a possible solution in the 
+`chef-testing-lab-final` folder of this project.
+
+Also, now that you've seen how ChefSpec is being run behind the scenes (with
+rspec), it's time to introduce a convenience method! Run
+
+````
+bundle exec rake test
+````
+
+And you should see the same test output as the manual `rspec` command. Take a 
+look and the `Rakefile.rb` to see where that task is defined and how it works
+if you're interested. <http://www.rubydoc.info/github/rspec/rspec-core/RSpec/Core/RakeTask>
+has some documentation about rspec's RakeTask class.
 
 [1]: https://www.vagrantup.com/
 [2]: https://www.virtualbox.org/wiki/Downloads
