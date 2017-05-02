@@ -1,28 +1,48 @@
 ---
+# We define the default driver.
+# For this lab, we'll be using https://github.com/test-kitchen/kitchen-docker
+# as our driver
 driver:
   name: docker
 
+# We define the default provisioner, which is what will actually run on our
+# test instances. For this lab, we're using chef-solo.
 provisioner:
   name: chef_solo
+# We want to tell the provisioner where our environment files are located
   environments_path: "./environments/"
+# We'll also tell chef-solo what environment it's running as.
+# Remmber that .kitchen.yml is an ERB file so we'll look for an environment
+# variable called `CHEF_ENV` to tell us that information
   solo_rb:
     environment: <%= ENV['CHEF_ENV'] || 'dev' %>
 
+# Platforms define the OS/environments on which tests can be run.
+# For our example we have only a CentOS 6 platform.
 platforms:
   - name: centos6
+# This provides some extra driver configuration for this specific platform
+# Documentation can be found at https://github.com/test-kitchen/kitchen-docker
     driver_config: 
       image: centos:6
       platform: centos
       remove_images: true
+# Let's assume that we require a specific version of Chef
       require_chef_omnibus: 12.14.77
 
+# Now we define our test suites. Here we have only 1, the default suite.
 suites:
   - name: default
+# We will converge on the `server` role
     run_list: [
       "role[server]"
     ]
 
+# Finally, we define how our tests will be run.
+# We'll be using Inspec for our integration tests
 verifier:
   name: inspec
+# Inspec supports test attributes, which are dynamic test variables.
+# We'll load ours from a file depending on the Chef environment
   attrs:
     - "test/integration/<%= ENV['CHEF_ENV'] || 'dev' %>-attributes.yml"

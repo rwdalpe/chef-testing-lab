@@ -78,7 +78,8 @@ YAML file with dynamic properties controlled via environment variables.
 
 `Berksfile`: [Berkshelf][6] is a dependency manager for chef cookbooks. 
 Berkshelf can be told to fetch cookbooks from local paths, git repositories, and
-other types of locations. In this lab, we have only the one `time_wrapper` cookbook. All other dependencies will be fetched from the chef supermarket.
+other types of locations. In this lab, we have only the one `time_wrapper` 
+cookbook. All other dependencies will be fetched from the chef supermarket.
 If you do look at the Berkshelf documentation, you'll have to scroll for a while
 to reach the Berksfile portion.
 
@@ -180,6 +181,123 @@ And you should see the same test output as the manual `rspec` command. Take a
 look and the `Rakefile.rb` to see where that task is defined and how it works
 if you're interested. <http://www.rubydoc.info/github/rspec/rspec-core/RSpec/Core/RakeTask>
 has some documentation about rspec's RakeTask class.
+
+When you're finished, you should see output like the following
+
+````
+Finished in 0.288 seconds (files took 2.42 seconds to load)
+2 examples, 0 failures
+````
+
+### Integration Testing
+
+Now that we have some unit tests for our time_wrapper cookbook and we're more
+confident in it, let's move on to integration tests.
+
+In our fictional scenario, we have some `server` role and we want to set the
+timezone and install NTP. Looking at the `server.rb` file confirms that's what
+we're trying to do. But we want to verify that, after convergence is complete,
+everything is as we expect. Specifically, we want the instance to:
+
+* have the correct timezone set according to both `/etc/sysconfig/clock` and
+  `/etc/localtime`
+* have the `ntpd` service be installed and enabled
+
+Like with unit testing, let's see what the state of our integration tests are.
+Unlike unit tests, which are specific to a cookbook, our integration tests will
+function on roles. The test files are located in `test/integration`, which is
+the default structure expected by Test-Kitchen.
+
+Test-Kitchen reads a file called `.kitchen.yml` to configure itself. Look at 
+that file to see how we're set-up. It's fully commented. Once you're done with
+that, let's look at our single integration test file, `default_spec.rb`. It too
+is commented, so it shouldn't be too hard to see what's going on there.
+
+After you've looked around, let's try running these tests!
+
+First, let's do this long-form. First, let's try converging an instance without
+running any tests.
+
+````
+bundle exec kitchen converge
+````
+
+You'll see a LOT of output where it downloads a docker image, installs Chef,
+uses Berkshelf to resolve and upload all cookbook dependencies to the instance 
+and finally converges the instance. Everything should converge successfully, and 
+then you'll see something like
+
+````
+       Chef Client finished, 9/15 resources updated in 03 seconds
+       Finished converging <default-centos6> (0m11.27s).
+````
+
+Now let's run our tests
+
+````
+bundle exec kitchen verify
+````
+
+You should see output similar to
+
+````
+  File /etc/sysconfig/clock
+     ✔  should exist
+     ✔  should be file
+     ✔  content should match "ZONE=\"US/Pacific\"\nUTC=true"
+  test /etc/localtime
+     ↺  Write a test which verifies
+     /etc/localtime
+     * exists,
+     * is a file,
+     * is a symlink,
+     * and is symlinked to the expected timezone file in /usr/share/zoneinfo
+  Service ntpd
+     ✔  should be installed
+     ✔  should be enabled
+
+Test Summary: 5 successful, 0 failures, 1 skipped
+       Finished verifying <default-centos6> (0m0.29s).
+````
+
+which tells us that one of our tests isn't finished yet.
+
+To clean up, let's do
+
+````
+bundle exec kitchen destroy
+````
+
+which will tear down the instance we just created.
+
+To destroy, converge, test, and destroy again, we can do
+
+````
+bundle exec kitchen test
+````
+
+Now that we're familiar with the commands that are executing, let's fix that 
+test! Following the instructions in the comments of the `default_spec.rb` file,
+flesh out the unfinished test. <https://www.inspec.io/docs/reference/resources/>
+will probably be helpful, and remember that there's a possible solution in the
+`chef-testing-lab-final` directory.
+
+`bundle exec kitchen test` is pretty short, but there's also rake tasks to run
+the tests as well. `bundle exec rake kitchen:all` or 
+`bundle exec rake kitchen:default-centos6`. You can use `bundle exec rake -T`
+to list all the rake tasks available to you.
+
+Once you've got the tests passing, celebrate! 
+
+**But wait!**
+
+We have another environment! I wonder what happens if we run those tests...
+
+````
+CHEF_ENV=stg bundle exec kitchen test
+````
+
+Looks like there's something else wrong here.
 
 [1]: https://www.vagrantup.com/
 [2]: https://www.virtualbox.org/wiki/Downloads
