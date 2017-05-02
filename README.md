@@ -95,7 +95,14 @@ describe such sequences in depth before introducing the rake wrappers.
 
 Before we do anything else, we need to get our ruby dependencies!
 
-From the `chef-testing-lab` directory, use bundler to install the dependencies.
+First, sign into the VM
+
+````
+vagrant ssh
+````
+
+Change to the `chef-testing-lab` in your home directory directory, use bundler 
+to install the dependencies.
 
 ````
 bundle install
