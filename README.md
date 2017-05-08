@@ -133,6 +133,8 @@ ChefSpec is an extension of [rspec][9], and it can be configured like rspec.
 To run the tests:
 
 ````
+# --format documentation has rspec print full test descriptions rather than just pass/fail
+# 
 # --color just makes the output a bit prettier
 #
 # --default-path is used here because rspec defaults to looking for a 
@@ -143,7 +145,7 @@ To run the tests:
 # --require ./spec_helper tells rspec to require the file 'spec_helper.rb' from 
 # during every test run. We can use this spec_helper to define widely used
 # common test code
-bundle exec rspec --color --default-path cookbooks/*/test/unit/ --require ./spec_helper
+bundle exec rspec --format documentation --color --default-path cookbooks/*/test/unit/ --require ./spec_helper
 ````
 
 When you ran that command, you likely saw output containing the following:

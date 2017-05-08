@@ -42,7 +42,7 @@ end
 desc "Execute cookbook unit tests."
 RSpec::Core::RakeTask.new(:test) do |t|
   t.pattern = "**/*_spec.rb"
-  t.rspec_opts = "--color --default-path cookbooks/*/test/unit/ --require ./spec_helper"
+  t.rspec_opts = "--format documentation --color --default-path cookbooks/*/test/unit/ --require ./spec_helper"
 end
 
 Kitchen::RakeTasks.new()
