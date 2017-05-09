@@ -250,10 +250,8 @@ bundle exec kitchen verify
 You should see output similar to
 
 ````
-  File /etc/sysconfig/clock
-     ✔  should exist
-     ✔  should be file
-     ✔  content should match "ZONE=\"US/Pacific\"\nUTC=true"
+  /etc/sysconfig/clock tests
+     ✔  should have correct content
   test /etc/localtime
      ↺  Write a test which verifies
      /etc/localtime
@@ -261,12 +259,10 @@ You should see output similar to
      * is a file,
      * is a symlink,
      * and is symlinked to the expected timezone file in /usr/share/zoneinfo
-  Service ntpd
-     ✔  should be installed
-     ✔  should be enabled
+  ntpd service
+     ✔  should be installed and enabled
 
-Test Summary: 5 successful, 0 failures, 1 skipped
-       Finished verifying <default-centos6> (0m0.29s).
+Test Summary: 2 successful, 0 failures, 1 skipped
 ````
 
 which tells us that one of our tests isn't finished yet.
@@ -309,10 +305,8 @@ CHEF_ENV=stg bundle exec kitchen test
 Looks like there's something else wrong here.
 
 ````
-  File /etc/sysconfig/clock
-     ✔  should exist
-     ✔  should be file
-     ∅  content should match "ZONE=\"Etc/UTC\"\nUTC=true"
+  /etc/sysconfig/clock tests
+     ∅  should have correct content
      expected "ZONE=\"US/Eastern\"\nUTC=true" to match "ZONE=\"Etc/UTC\"\nUTC=true"
      Diff:
      @@ -1,3 +1,3 @@
